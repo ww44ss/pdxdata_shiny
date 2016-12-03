@@ -1,0 +1,38 @@
+Shiny Overview
+========================================================
+author: Winston Saunders
+date: December 2016
+autosize: true
+
+First Slide
+========================================================
+
+For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+Slide With Code
+========================================================
+
+```{r, echo=FALSE}
+library(shiny)
+sidebarLayout(
+  sidebarPanel(
+    selectizeInput('main', 'Main title', LETTERS),
+    sliderInput('size', 'Point size', min = 0.2, max = 5, value = 1)
+  ),
+  mainPanel(
+    renderPlot(plot(cars, main = input$main, cex = input$size, pch = 19),
+               width = 600, height = 400)
+  )
+)
+```
+
+Slide With Plot
+========================================================
+
+```{r, echo=FALSE}
+plot(cars)
+```

@@ -1,0 +1,152 @@
+---
+title: "Shiny_In_Markdown Demo"
+author: "Winston Saunders"
+date: "12/7/2016"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+
+## THIS JUST LOADS PACKAGES
+
+required.packages <- c(
+    "shiny", "tidyverse", "nycflights13", "yo", "forcats"
+    )
+    
+    for (x in required.packages) {
+        if (length(find.package(x)) == 0){ 
+            if (x == "yo") {
+                devtools::install_github("ww44ss/yo") 
+            } else {
+                install.packages(x)
+            }
+        }
+        library(x, character.only = TRUE)
+    }
+
+
+```
+
+## R Markdown with Shiny
+
+
+Let's start with the raw data (from the `nycflights13` package)
+
+```{r echo = TRUE}
+head(flights)
+```
+
+## Clean and Analyze data
+
+Keep only columns we're interested in, then fix ordering `factor(month)`, and compute hourly sums.
+
+
+```{r echo = TRUE}
+
+## DATA CLEANING AND ANALYSIS
+
+        # clean data
+        f_m <- flights %>% select(month, dep_time)
+        
+        # reorder factor
+        f_m<- f_m %>% mutate(month = as.factor(month.abb[month]))
+        f_m$month <- f_m$month %>% lvls_revalue(month.abb[1:12])
+        
+        # compute hourly departure sums
+        hour_sums <- 
+                f_m %>% 
+                mutate(dep_hour = floor(dep_time/100) + 0.5) %>%
+                filter(dep_hour <= 23) %>%
+                group_by(month, dep_hour) %>%
+                summarize(count = n()) %>%
+                yo
+```
+
+We can sneak a peak of the computed data 
+
+```{r echo = TRUE}           
+    hour_sums
+
+
+        ## Source: local data frame [268 x 3]
+        ## Groups: month [?]
+        ## 
+        ##     month dep_hour count
+        ##    <fctr>    <dbl> <int>
+        ## 1     Jan      0.5    78
+        ## 2     Jan      1.5    30
+        ## 3     Jan      2.5    11
+        ## 4     Jan      3.5     2
+        ## 5     Jan      4.5    27
+        ## 6     Jan      5.5   716
+        ## 7     Jan      6.5  1833
+        ## 8     Jan      7.5  1747
+        ## 9     Jan      8.5  2153
+        ## 10    Jan      9.5  1735
+        ## # ... with 258 more rows
+
+```
+
+## Interactive Plot of Departures by Month
+
+
+```{r, echo = TRUE}
+
+shinyApp(
+  
+## UI CODE    
+          ui = fluidPage(
+            selectInput("month", "Month:", 
+                        choices = month.abb[1:12]),
+            hr(),
+            plotOutput("Plot")
+          ),
+  
+## SERVER CODE 
+          
+          server = function(input, output) {
+     
+              ## define output plot
+              output$Plot <- renderPlot({
+                    
+                ## build plot data frames from hour_sums
+                plot_df <- 
+                    hour_sums %>%
+                    filter(month == input$month) %>%
+                    ruhroh
+                
+                plot_df2 <-
+                    hour_sums %>%
+                    ungroup %>% 
+                    group_by(dep_hour) %>% 
+                    summarize(ave = mean(count)) %>%
+                    yo
+                
+ 
+                  p <- ggplot(plot_df, aes(x = dep_hour, y = count)) +
+                      ## define geoms
+                      geom_bar(stat='identity', fill = "#004785") + 
+                      geom_line(data = plot_df2, aes(x = dep_hour, y = ave), color = "#EF3C40", size = 2) +
+                      ## adjust labels and scale
+                      labs(title = paste("flights by hour from NYC: ", input$month, " 2013")) + 
+                      ylim(0, max(hour_sums$count)) +
+                      ## fix theme
+                      theme(axis.text=element_text(size=14, color = "#555555"),
+                          axis.title=element_text(size=15,face="bold", color = "#555555"),
+                          title=element_text(size=16,face="bold", color = "#004785"), 
+                          legend.position="none") 
+                  
+                  print(p)
+                  
+                })
+           },
+  
+  options = list(height = 500)
+)
+```
+
+
+

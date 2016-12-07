@@ -2,16 +2,11 @@
 
 contains core, presentations, etc for PDX R User Group Meetup 7 December 2016
 
-* 01-How-to-start.pdf	from RStudio. 
-* MoreInterestingDemo.R	something I am playing with
-
-* PDX Data Shiny Intro.key	presentation
-* PDX Data Shiny Intro.pdf	presentation
-
-* Shiny_in_Markdown.Rmd	simple project highlighting some shiny functionality
-* Shiny_in_Markdown.html	add in markdown demo	a day ago
-* actual_demo.R	shiny demo of capability
-* hello_world.R	hello world code
+* MoreInterestingDemo.R	_ something I am playing with..._   
+* PDX Data Shiny Intro.pdf	_ basic intro presentation for taking people from zero to 1000 feet_  
+* Shiny_in_Markdown.Rmd	_ simple project highlighting some shiny functionality with ggplot_   
+* actual_demo.R	_ shiny demo of capability with simple statistics example_   
+* hello_world.R	_  hello world shiny r-script_   
 
 
 

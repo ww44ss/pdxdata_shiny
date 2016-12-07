@@ -99,8 +99,7 @@ shinyApp(
   
 ## UI CODE    
           ui = fluidPage(
-            selectInput("month", "Month:", 
-                        choices = month.abb[1:12]),
+            selectInput("month", "Month:", choices = month.abb[1:12]),
             hr(),
             plotOutput("Plot")
           ),

@@ -2,8 +2,11 @@
 
 library(shiny)
 
-ui <- fluidPage("Hello, World")
+shinyApp(
+    
+    ui = fluidPage("Hello World"),
+         
+    server = function(input, output) {}
+    
+    )
 
-server <- function(input, output) {}
-
-shinyApp(ui = ui, server = server)
